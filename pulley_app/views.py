@@ -9,6 +9,13 @@ from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from .forms import ImageUploadForm
 import os
+from rest_framework import viewsets
+from .models import Image_database
+from .serializers import DatasetSerializer
+
+class DatasetViewSet(viewsets.ModelViewSet):
+    queryset = Image_database.objects.all()
+    serializer_class = DatasetSerializer
 
 def detect_pulleys(request):
     result_image_url = None
