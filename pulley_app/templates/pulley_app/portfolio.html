@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile | Indian Railway</title>
+
+  <!-- Bootstrap + Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    /* Header */
+    .profile-header {
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      padding: clamp(25px, 5vw, 40px) clamp(15px, 3vw, 20px);
+      box-shadow: 0 4px 20px rgba(0, 33, 71, 0.3);
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      top: clamp(20px, 4vw, 30px);
+      left: clamp(15px, 3vw, 20px);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: clamp(8px, 1.5vw, 10px) clamp(15px, 3vw, 20px);
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      transform: translateX(-3px);
+    }
+
+    .profile-header h1 {
+      text-align: center;
+      font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+      font-weight: 700;
+      color: white;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Profile Container */
+    .profile-container {
+      max-width: min(800px, calc(100% - 30px));
+      margin: clamp(-60px, -10vw, -80px) auto clamp(30px, 6vw, 50px);
+      position: relative;
+    }
+
+    /* Avatar Section */
+    .avatar-section {
+      text-align: center;
+      margin-bottom: clamp(30px, 6vw, 40px);
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .avatar-container {
+      width: clamp(140px, 25vw, 180px);
+      height: clamp(140px, 25vw, 180px);
+      border-radius: 50%;
+      background: white;
+      padding: clamp(6px, 1.2vw, 8px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: visible;
+    }
+
+    .avatar-container:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 50px rgba(0, 102, 204, 0.3);
+    }
+
+    .avatar-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: clamp(3rem, 8vw, 4.5rem);
+      font-weight: 700;
+    }
+
+    .avatar-image img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .camera-icon {
+      position: absolute;
+      bottom: clamp(5px, 1vw, 10px);
+      right: clamp(5px, 1vw, 10px);
+      width: clamp(40px, 8vw, 50px);
+      height: clamp(40px, 8vw, 50px);
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid white;
+    }
+
+    .camera-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+    }
+
+    /* Avatar Options Menu */
+    .avatar-options {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      padding: clamp(8px, 1.5vw, 10px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 100;
+      min-width: clamp(200px, 40vw, 250px);
+    }
+
+    .avatar-options.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .avatar-option {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 2vw, 12px);
+      padding: clamp(12px, 2.5vw, 15px);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #002147;
+      font-weight: 600;
+      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    }
+
+    .avatar-option:hover {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      color: #0066cc;
+    }
+
+    .avatar-option i {
+      width: clamp(35px, 7vw, 40px);
+      height: clamp(35px, 7vw, 40px);
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+    }
+
+    .avatar-option.remove i {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+
+    /* Hidden file input */
+    .hidden-file-input {
+      display: none;
+    }
+
+    /* Camera Modal */
+    .camera-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .camera-modal-content {
+      max-width: 600px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .camera-preview {
+      width: 100%;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .camera-canvas {
+      display: none;
+    }
+
+    .camera-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .btn-capture {
+      flex: 1;
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-capture:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
+    }
+
+    .btn-camera-cancel {
+      flex: 1;
+      background: white;
+      color: #dc3545;
+      border: 2px solid #dc3545;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-camera-cancel:hover {
+      background: #dc3545;
+      color: white;
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: white;
+      border-radius: 25px;
+      padding: clamp(30px, 6vw, 40px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-card h2 {
+      color: #002147;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      margin-bottom: clamp(25px, 5vw, 30px);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Form Groups */
+    .form-group {
+      margin-bottom: clamp(20px, 4vw, 25px);
+    }
+
+    .form-label {
+      color: #002147;
+      font-weight: 600;
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-label i {
+      color: #0066cc;
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .form-control {
+      background: #f8f9fa;
+      border: 2px solid #e0e6ed;
+      border-radius: 12px;
+      padding: clamp(12px, 2.5vw, 14px) clamp(15px, 3vw, 50px) clamp(12px, 2.5vw, 14px) clamp(15px, 3vw, 18px);
+      color: #002147;
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+      transition: all 0.3s ease;
+      width: 100%;
+      font-weight: 500;
+    }
+
+    .form-control:focus {
+      background: white;
+      border-color: #0066cc;
+      box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+      outline: none;
+    }
+
+    .form-control:disabled {
+      background: #e9ecef;
+      cursor: not-allowed;
+    }
+
+    .edit-icon {
+      position: absolute;
+      right: clamp(12px, 2.5vw, 15px);
+      top: 50%;
+      transform: translateY(-50%);
+      color: #0066cc;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .edit-icon:hover {
+      color: #004080;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Password Field */
+    .password-toggle {
+      position: absolute;
+      right: clamp(45px, 9vw, 50px);
+      top: 50%;
+      transform: translateY(-50%);
+      color: #0066cc;
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .password-toggle:hover {
+      color: #004080;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: clamp(12px, 2.5vw, 15px);
+      margin-top: clamp(30px, 6vw, 35px);
+      flex-wrap: wrap;
+    }
+
+    .btn-save {
+      flex: 1;
+      min-width: clamp(140px, 30vw, 160px);
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      color: white;
+      border: none;
+      padding: clamp(13px, 2.8vw, 15px);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 102, 204, 0.5);
+    }
+
+    .btn-cancel {
+      flex: 1;
+      min-width: clamp(140px, 30vw, 160px);
+      background: white;
+      color: #0066cc;
+      border: 2px solid #0066cc;
+      padding: clamp(13px, 2.8vw, 15px);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-cancel:hover {
+      background: #0066cc;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    }
+
+    /* Info Alert */
+    .info-alert {
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      border-left: 4px solid #0066cc;
+      border-radius: 12px;
+      padding: clamp(12px, 2.5vw, 15px);
+      margin-bottom: clamp(25px, 5vw, 30px);
+      display: flex;
+      align-items: start;
+      gap: 10px;
+    }
+
+    .info-alert i {
+      color: #0066cc;
+      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .info-alert p {
+      margin: 0;
+      color: #002147;
+      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+      line-height: 1.5;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: clamp(8px, 2vw, 12px) clamp(5px, 1vw, 10px);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #666;
+      font-size: clamp(0.7rem, 1.6vw, 0.8rem);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      flex: 1;
+      max-width: clamp(70px, 15vw, 90px);
+      padding: clamp(5px, 1vw, 8px) 0;
+    }
+
+    .icon-wrapper {
+      width: clamp(42px, 9vw, 48px);
+      height: clamp(42px, 9vw, 48px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 3px;
+      transition: all 0.3s ease;
+      background: rgba(0, 33, 71, 0.05);
+    }
+
+    .nav-item svg {
+      width: clamp(18px, 4vw, 20px);
+      height: clamp(18px, 4vw, 20px);
+      fill: #666;
+      transition: fill 0.3s ease;
+    }
+
+    .nav-item.active .icon-wrapper {
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    }
+
+    .nav-item.active svg {
+      fill: white;
+    }
+
+    .nav-item.active {
+      color: #002147;
+      font-weight: 600;
+    }
+
+    .nav-item:hover .icon-wrapper {
+      background: rgba(0, 33, 71, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .nav-text {
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="profile-header">
+    <a href="dashboard.html" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back</span>
+    </a>
+    <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+  </header>
+
+  <!-- Profile Container -->
+  <div class="profile-container">
+    
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <div class="avatar-container" onclick="toggleAvatarOptions()">
+          <div class="avatar-image" id="avatarImage">
+            J
+          </div>
+          <div class="camera-icon">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+
+        <!-- Avatar Options Menu -->
+        <div class="avatar-options" id="avatarOptions">
+          <label class="avatar-option" for="uploadImage">
+            <i class="fas fa-upload"></i>
+            <span>Upload Image</span>
+          </label>
+          <input type="file" id="uploadImage" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(event)">
+          
+          <label class="avatar-option" onclick="openCamera()">
+            <i class="fas fa-camera"></i>
+            <span>Take Picture</span>
+          </label>
+          <input type="file" id="captureImage" class="hidden-file-input" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
+          
+          <div class="avatar-option remove" onclick="removeProfilePicture()">
+            <i class="fas fa-trash-alt"></i>
+            <span>Remove Picture</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div class="camera-modal" id="cameraModal">
+      <div class="camera-modal-content">
+        <video id="cameraPreview" class="camera-preview" autoplay playsinline></video>
+        <canvas id="canvas" class="camera-canvas"></canvas>
+        <div class="camera-buttons">
+          <button onclick="capturePhoto()" class="btn-capture">
+            <i class="fas fa-camera"></i> Capture
+          </button>
+          <button onclick="closeCamera()" class="btn-camera-cancel">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <h2>
+        <i class="fas fa-edit"></i>
+        Edit Profile
+      </h2>
+
+      <div class="info-alert">
+        <i class="fas fa-info-circle"></i>
+        <p>Click the edit icon next to any field to update your information. Don't forget to save your changes!</p>
+      </div>
+
+      <form id="profileForm">
+        
+        <!-- Username -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-user"></i> Username
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              name="username" 
+              id="username"
+              class="form-control" 
+              value="JohnDoe"
+              disabled
+            >
+            <i class="fas fa-pen edit-icon" onclick="enableEdit('username')"></i>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-envelope"></i> Email Address
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              name="email" 
+              id="email"
+              class="form-control" 
+              value="john.doe@example.com"
+              disabled
+            >
+            <i class="fas fa-pen edit-icon" onclick="enableEdit('email')"></i>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-phone"></i> Phone Number
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="tel" 
+              name="phone" 
+              id="phone"
+              class="form-control" 
+              value="+91 9876543210"
+              disabled
+            >
+            <i class="fas fa-pen edit-icon" onclick="enableEdit('phone')"></i>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-lock"></i> Password
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              name="password" 
+              id="password"
+              class="form-control" 
+              placeholder="Enter new password to change"
+              disabled
+            >
+            <i class="fas fa-eye password-toggle" id="passwordToggle" onclick="togglePassword()"></i>
+            <i class="fas fa-pen edit-icon" onclick="enableEdit('password')"></i>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+          <button type="submit" class="btn-save">
+            <i class="fas fa-save"></i>
+            Save Changes
+          </button>
+          <button type="button" class="btn-cancel" onclick="cancelEdit()">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 3l10 9h-3v9h-6v-6h-2v6H5v-9H2Z" />
+        </svg>
+      </div>
+      <span class="nav-text">Home</span>
+    </a>
+    
+    <a href="bookings.html" class="nav-item">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" />
+        </svg>
+      </div>
+      <span class="nav-text">Bookings</span>
+    </a>
+    
+    <a href="services.html" class="nav-item">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+        </svg>
+      </div>
+      <span class="nav-text">Services</span>
+    </a>
+    
+    <a href="profile.html" class="nav-item active">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 12a5 5 0 1 0-5-5a5 5 0 0 0 5 5Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z" />
+        </svg>
+      </div>
+      <span class="nav-text">Profile</span>
+    </a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    let stream = null;
+
+    // Toggle avatar options menu
+    function toggleAvatarOptions() {
+      const options = document.getElementById('avatarOptions');
+      options.classList.toggle('active');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const avatarWrapper = document.querySelector('.avatar-wrapper');
+      const options = document.getElementById('avatarOptions');
+      
+      if (!avatarWrapper.contains(event.target) && options.classList.contains('active')) {
+        options.classList.remove('active');
+      }
+    });
+
+    // Open camera
+    async function openCamera() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'user' },
+            audio: false 
+          });
+          
+          const video = document.getElementById('cameraPreview');
+          video.srcObject = stream;
+          
+          document.getElementById('cameraModal').style.display = 'block';
+          document.getElementById('avatarOptions').classList.remove('active');
+        } catch (error) {
+          console.error('Camera access denied or not available:', error);
+          alert('Unable to access camera. Please check permissions or use "Upload Image" instead.');
+          document.getElementById('captureImage').click();
+        }
+      } else {
+        document.getElementById('captureImage').click();
+      }
+    }
+
+    // Capture photo from video stream
+    function capturePhoto() {
+      const video = document.getElementById('cameraPreview');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      canvas.toBlob(function(blob) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const avatarImage = document.getElementById('avatarImage');
+          avatarImage.innerHTML = `<img src="${e.target.result}" alt="Profile Picture">`;
+        };
+        reader.readAsDataURL(blob);
+        
+        closeCamera();
+      }, 'image/jpeg', 0.95);
+    }
+
+    // Close camera modal
+    function closeCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+      document.getElementById('cameraModal').style.display = 'none';
+    }
+
+    // Handle image upload from file input
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const avatarImage = document.getElementById('avatarImage');
+          avatarImage.innerHTML = `<img src="${e.target.result}" alt="Profile Picture">`;
+        };
+        reader.readAsDataURL(file);
+        
+        document.getElementById('avatarOptions').classList.remove('active');
+      }
+    }
+
+// Remove profile picture
+    function removeProfilePicture() {
+      const avatarImage = document.getElementById('avatarImage');
+      avatarImage.innerHTML = 'J';
+      
+      document.getElementById('avatarOptions').classList.remove('active');
+      
+      // Show confirmation
+      alert('Profile picture removed successfully!');
+    }
+
+    // Enable field editing
+    function enableEdit(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.disabled = false;
+      field.focus();
+      field.select();
+    }
+
+    // Toggle password visibility
+    function togglePassword() {
+      const passwordField = document.getElementById('password');
+      const toggleIcon = document.getElementById('passwordToggle');
+      
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+
+    // Cancel editing
+    function cancelEdit() {
+      location.reload();
+    }
+
+    // Handle form submission
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        password: document.getElementById('password').value
+      };
+      
+      // Get avatar image if exists
+      const avatarImg = document.getElementById('avatarImage').querySelector('img');
+      if (avatarImg) {
+        formData.profilePicture = avatarImg.src;
+      }
+      
+      // Here you would send data to your backend
+      console.log('Form Data:', formData);
+      
+      // Show success message
+      alert('Profile updated successfully!');
+      
+      // Disable all fields again
+      document.getElementById('username').disabled = true;
+      document.getElementById('email').disabled = true;
+      document.getElementById('phone').disabled = true;
+      document.getElementById('password').disabled = true;
+      document.getElementById('password').value = '';
+    });
+
+    // Store original values for cancel functionality
+    const originalValues = {
+      username: document.getElementById('username').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value
+    };
+  </script>
+</body>
+</html>
