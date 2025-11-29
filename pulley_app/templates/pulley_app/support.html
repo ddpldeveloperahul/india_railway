@@ -365,16 +365,16 @@
   <div class="container-main">
     
     <!-- User Info Card -->
-    <div class="user-info-card">
+    {% comment %} <div class="user-info-card">
       <img src="https://i.pinimg.com/736x/96/8f/14/968f14e1e60d0819dd356adfa5d614ec.jpg" alt="Profile" class="user-avatar" />
       <div class="user-details">
         <div class="user-name">{{ user.username|capfirst }}</div>
         <div class="user-email">{{ user.email }}</div>
       </div>
-    </div>
+    </div> {% endcomment %}
 
     <!-- Account Settings -->
-    <h3 class="section-header">
+    <h3 class="section-header mt-5">
       <i class="fas fa-user-cog"></i> Account Settings
     </h3>
     

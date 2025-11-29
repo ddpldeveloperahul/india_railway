@@ -32,7 +32,7 @@ from .models import DetectionRecord
 
 
 def main_view(request):
-    return render(request, 'pulley_app/railways.html')
+    return render(request, 'pulley_app/index.html')
 
 
 def railway_view(request):
@@ -63,6 +63,11 @@ def signup_view(request):
     return render(request, 'pulley_app/signup.html',{'form': form})
 
 
+def count_user(request):
+    employee = CustomUser.objects.all()
+    user_count=employee.count()
+    # user_count = CustomUser.objects.count()
+    return render(request, 'pulley_app/employees.html', {'user_count': user_count, 'employee': employee})
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -166,7 +171,7 @@ def detect_pulleys(request):
         if form.is_valid():
             image_file = form.cleaned_data["image"]
             print("image_file",image_file)
-            MODEL_PATH = "C://Users//Dell Pc//Desktop//Yolo2//PulleyDetector//ai//runs//detect//yolov11m-custom//weights//best.pt"
+            MODEL_PATH = r"D:\PulleyDetector\ai\runs\detect\yolov11m-custom\weights\best.pt"
             uploads_storage = FileSystemStorage(
                 location=os.path.join(settings.MEDIA_ROOT, 'uploads'),
                 base_url=settings.MEDIA_URL + 'uploads/'
@@ -241,7 +246,7 @@ def detect_pulleys(request):
 
             model = YOLO(MODEL_PATH)
 
-            results = model.predict(source=IMAGE_PATH, save=True, verbose=False)
+            results = model.predict(source=IMAGE_PATH, save=False, verbose=False)
             if not results:
                 raise RuntimeError("No results returned by the model.")
 
@@ -372,7 +377,7 @@ def detect_pulleys(request):
             # Compute and draw 1->2
             if p1 is not None and p2 is not None:
                 d_px = pixel_distance(p1, p2)
-                dist12_mm = 1.6*d_px * MM_PER_PIXEL
+                dist12_mm = 2.5*d_px * MM_PER_PIXEL
                 cv2.line(img, (int(p1[0]), int(p1[1])), (int(p2[0]), int(p2[1])), (0, 0, 255), 2)
                 mid12 = (int((p1[0] + p2[0]) / 2), int((p1[1] + p2[1]) / 2))
                 cv2.putText(img, f"{dist12_mm:.2f} mm", mid12, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
@@ -382,7 +387,7 @@ def detect_pulleys(request):
 
             if p2 is not None and p3 is not None:
                 d_px = pixel_distance(p2, p3)
-                dist23_mm = 1.6*d_px * MM_PER_PIXEL
+                dist23_mm = 2.5*d_px * MM_PER_PIXEL
                 cv2.line(img, (int(p2[0]), int(p2[1])), (int(p3[0]), int(p3[1])), (255, 0, 0), 2)
                 mid23 = (int((p2[0] + p3[0]) / 2), int((p2[1] + p3[1]) / 2))
                 cv2.putText(img, f"{dist23_mm:.2f} mm", mid23, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2, cv2.LINE_AA)
@@ -443,6 +448,7 @@ def detect_pulleys(request):
             # cv2.imshow("output",img)
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
+        
 
             # Print distances
             print(f"HTL (L/2) value: {htl_value:.1f}")
@@ -493,6 +499,9 @@ def detect_pulleys(request):
                     loss_mm=loss_mm_db,
                     distances=distance_summary
                 )
+                
+                
+            
             except Exception as e:
                 print(f"Warning: failed to save PulleyDetection record: {e}")
     else:
@@ -667,7 +676,7 @@ CAPTURE_SUBDIR = Path("best_captures")
 MEDIA_ROOT = Path(getattr(settings, "MEDIA_ROOT", Path(settings.BASE_DIR) / "media"))
 BEST_CAPTURE_DIR = MEDIA_ROOT / CAPTURE_SUBDIR
 REFERENCE_LABELS = ("poll", "pole", "counter weight")
-MODEL_PATH = Path("C://Users//Dell Pc//Desktop//new railway//myvideodetectections//ai//runs//detect//yolov11m-custom//weights//best.pt")
+MODEL_PATH = Path(r"D:\PulleyDetector\AI_Model\runs\detect\yolov11m-custom\weights\best.pt")
 _yolo_model = None
 _model_lock = threading.Lock()
 

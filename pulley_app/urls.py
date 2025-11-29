@@ -16,6 +16,7 @@ urlpatterns = [
     path('bookings/', views.bookings_view, name='bookings'),
     path('services/', views.services_view, name='services'),
     path('support/', views.support_view, name='support'),
+    path('employee/', views.count_user, name='employee'),
     # Password management URLs
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),

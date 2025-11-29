@@ -635,7 +635,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>{{ employees|length }}</h3>
+                    <h3>{{ user_count  }}</h3>
                     <p>Total Employees</p>
                 </div>
             </div>
@@ -644,7 +644,7 @@
                     <i class="fas fa-user-check"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>{{ active_count }}</h3>
+                    <h3>{{ active_count }}</h3> 
                     <p>Active Users</p>
                 </div>
             </div>
@@ -686,38 +686,36 @@
                     <thead>
                         <tr>
                             <th><i class="fas fa-hashtag"></i>ID</th>
-                            <th><i class="fas fa-user"></i>Employee</th>
-                            <th><i class="fas fa-id-badge"></i>Employee No.</th>
-                            <th><i class="fas fa-envelope"></i>Email</th>
-                            <th><i class="fas fa-user-tag"></i>Role</th>
-                            <th><i class="fas fa-toggle-on"></i>Status</th>
-                            <th><i class="fas fa-calendar"></i>Joined Date</th>
-                            <th><i class="fas fa-cog"></i>Actions</th>
+                            <th><i class="fas fa-user"></i>username</th>
+                            <th><i class="fas fa-id-badge"></i>Employee Id.</th>
+                            <th><i class="fas fa-envelope"></i>data_joined</th>
+                            <th><i class="fas fa-user-tag"></i>last_login</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
-                        {% for employee in employees %}
+                        {% for us in user %}
                             <tr>
                                 <td>
-                                    <span class="badge badge-id">#{{ employee.id }}</span>
+                                    <span class="badge badge-id">#{{ us.id }}</span>
                                 </td>
                                 <td>
                                     <div class="employee-info">
                                         <div class="employee-avatar">
-                                            {{ employee.username|first|upper }}
+                                            {{ us.username|first|upper }}
                                         </div>
                                         <div class="employee-details">
-                                            <span class="employee-name">{{ employee.username|capfirst }}</span>
-                                            <span class="employee-email">{{ employee.get_full_name|default:"—" }}</span>
+                                            <span class="employee-name">{{ us.username|capfirst }}</span>
+                                            <span class="employee-email">{{ us.get_full_name|default:"—" }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <span class="badge badge-role">
-                                        {{ employee.employee_id|default:"N/A" }}
+                                        {{ us.employee_id|default:"N/A" }}
                                     </span>
                                 </td>
-                                <td>{{ employee.email }}</td>
+                                <td>{{ us.email }}</td>
                                 <td>
                                     <span class="badge badge-role">
                                         {% if employee.is_superuser %}
