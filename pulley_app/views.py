@@ -26,6 +26,8 @@ from django.conf import settings
 from pathlib import Path
 import json
 from .models import DetectionRecord
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 # yolo_camera.py
 
@@ -34,12 +36,10 @@ from .models import DetectionRecord
 def main_view(request):
     return render(request, 'pulley_app/index.html')
 
-
+@login_required
 def railway_view(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-    else:
-        return render(request, 'pulley_app/buttons2.html')
+    return render(request, 'pulley_app/buttons2.html')
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -50,7 +50,7 @@ def signup_view(request):
             #     employee_id=form.cleaned_data['employee_id'],
             #     password=form.cleaned_data['password']
             # )
-            # user = form.save(commit=False)
+            user = form.save(commit=False)
             form.save()
             # messages.success(request, "Signup successful! Please log in.")
             return redirect('login')
@@ -62,12 +62,6 @@ def signup_view(request):
         form = SignupForm()
     return render(request, 'pulley_app/signup.html',{'form': form})
 
-
-def count_user(request):
-    employee = CustomUser.objects.all()
-    user_count=employee.count()
-    # user_count = CustomUser.objects.count()
-    return render(request, 'pulley_app/employees.html', {'user_count': user_count, 'employee': employee})
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -85,15 +79,6 @@ def login_view(request):
       
     return render(request, 'pulley_app/login.html')
 
-
-# def logout_view(request):
-#     if request.method == 'POST':
-#         # Only logout when form is submitted (Yes button clicked)
-#         logout(request)
-#         return redirect('login')
-#     else:
-#         # Show confirmation page on GET request
-#         return render(request, 'pulley_app/logout.html')
 def logout_view(request):
     logout(request)
     return redirect('login')
@@ -131,9 +116,46 @@ def profile_view(request):
         profile_data =profile.objects.get(user=request.user)
         
     return render(request, 'pulley_app/profile2.html',{'profile': profile_data})
+# def all_data_view(request):
+#     detections = PulleyDetection.objects.all().order_by('-id')
+#     return render(request, 'pulley_app/list_olddata.html', {'detections': detections})
+@login_required
 def all_data_view(request):
-    detectections = PulleyDetection.objects.all().order_by('-id')
-    return render(request, 'pulley_app/list_olddata.html', {'detections': detectections})
+    if request.user.is_superuser:
+        query = request.GET.get('search')
+        if query:
+            detections = PulleyDetection.objects.filter(
+                Q(id__icontains=query) |
+                Q(user__icontains=query) |      
+                Q(temperature_c__icontains=query) |
+                Q(htl_value__icontains=query) |
+                Q(total_distance__icontains=query) |
+                Q(loss_mm__icontains=query) |
+                Q(created_at__icontains=query) |
+                Q(email__icontains=query)
+            ).order_by('-created_at')
+
+        else:
+            detections = PulleyDetection.objects.all().order_by('-created_at')
+    else:
+        return redirect('login')
+
+    return render(request, 'pulley_app/list_olddata.html', {"detection": detections, "search": query})
+
+def delete_detections(request, id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        detection = PulleyDetection.objects.get(id=id)
+        detection.delete()
+        messages.success(request, "Detection record deleted successfully.")
+    except PulleyDetection.DoesNotExist:
+        messages.error(request, "Detection record not found.")
+
+    return redirect('old_data')
+
+
 
 
 def result_data_view(request):
@@ -148,6 +170,19 @@ def all_data_view_for_camera(request):
     detectections = DetectionRecord.objects.all().order_by('-id')
     return render(request, 'pulley_app/data_camera.html', {'detections': detectections})
 
+def detete_detections_camera(request, id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        detection = DetectionRecord.objects.get(id=id)
+        detection.delete()
+        messages.success(request, "Detection record deleted successfully.")
+    except DetectionRecord.DoesNotExist:
+        messages.error(request, "Detection record not found.")
+
+    return redirect('all_data_camera')
+
 def result_data_view_for_camera(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -157,6 +192,42 @@ def result_data_view_for_camera(request):
 
 def demo_video_view(request):
     return render(request, 'pulley_app/demovideo.html')
+
+
+def employees_view(request):
+    query = request.GET.get('search')
+    # if request.user.is_authenticated:
+    if query:
+        employees = CustomUser.objects.filter(
+            Q(id__icontains=query) |
+            Q(username__icontains=query) |
+            Q(employee_id__icontains=query) |
+            Q(email__icontains=query)
+        ).order_by('-date_joined').count()
+
+    else:
+        employees = CustomUser.objects.all().order_by('-date_joined')
+
+    return render(request, 'pulley_app/userslits2.html', {"employees": employees, "search": query})
+    
+
+# def employees_view(request):
+#     """Employee management page - requires login and staff access"""
+#     if not request.user.is_authenticated:
+#         return redirect('login')
+    
+#     # Get all users/employees
+#     employees = CustomUser.objects.all().order_by('-date_joined')
+    
+#     # Count active users
+#     active_count = CustomUser.objects.filter(is_active=True).count()
+    
+#     context = {
+#         'employees': employees,
+#         'active_count': active_count,
+#     }
+    
+#     return render(request, 'pulley_app/userslits.html', context)
 
 
 def detect_pulleys(request):
@@ -572,23 +643,7 @@ def calculator_buttons_view(request):
     return render(request, 'pulley_app/calcbuttons.html')
 def pulley_calculator_views(request):
     return render(request, 'pulley_app/pulley_calculator.html')
-def employees_view(request):
-    """Employee management page - requires login and staff access"""
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
-    # Get all users/employees
-    employees = CustomUser.objects.all().order_by('-date_joined')
-    
-    # Count active users
-    active_count = CustomUser.objects.filter(is_active=True).count()
-    
-    context = {
-        'employees': employees,
-        'active_count': active_count,
-    }
-    
-    return render(request, 'pulley_app/employees.html', context)
+
 
 def chooes_your_database_view(request):
     return render(request, 'pulley_app/buttonimg.html')
@@ -676,7 +731,7 @@ CAPTURE_SUBDIR = Path("best_captures")
 MEDIA_ROOT = Path(getattr(settings, "MEDIA_ROOT", Path(settings.BASE_DIR) / "media"))
 BEST_CAPTURE_DIR = MEDIA_ROOT / CAPTURE_SUBDIR
 REFERENCE_LABELS = ("poll", "pole", "counter weight")
-MODEL_PATH = Path(r"D:\PulleyDetector\AI_Model\runs\detect\yolov11m-custom\weights\best.pt")
+MODEL_PATH = Path(r"D:\PulleyDetector\ai\runs\detect\yolov11m-custom\weights\best.pt")
 _yolo_model = None
 _model_lock = threading.Lock()
 
@@ -1189,7 +1244,7 @@ def yolo_camera(request):
         detection_thread.start()
         yolo_camera._detection_thread = detection_thread
 
-    return render(request, 'pulley_app/camera.html')
+    return render(request, 'pulley_app/camera2.html')
 
 def video_stream(request):
     """Stream video frames as MJPEG"""
@@ -1331,3 +1386,199 @@ def request_capture(request):
         detection_data['capture_requested'] = True
         detection_data['capture_complete'] = False
     return JsonResponse({'capture_requested': True})
+
+
+
+
+
+
+
+
+
+# Download recorded detections as CSV,pdf, or excel
+import csv
+from django.http import HttpResponse
+from  pulley_app.models import PulleyDetection,DetectionRecord, CustomUser
+from openpyxl import Workbook
+from reportlab.pdfgen import canvas
+
+def export_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="PulleyDetection.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ID','user', ' uploaded_image', 'result_image','temperature_c', 'htl_value','dist_p1_p2', 'dist_p2_p3', 'total_distance', 'expected_total', 'loss_mm', 'distances', 'created_at'])
+
+    for detect in PulleyDetection.objects.all():
+        writer.writerow([detect.id,detect.user, detect.uploaded_image,detect.result_image, detect.temperature_c, detect.htl_value, detect.dist_p1_p2, detect.dist_p2_p3, detect.total_distance, detect.expected_total, detect.loss_mm, detect.distances, detect.created_at])
+
+    return response
+
+
+
+# def export_excel(request):
+#     workbook = Workbook()
+#     sheet = workbook.active
+#     sheet.title = "PulleyDetection"
+
+#     sheet.append(['ID', 'user',' uploaded_image', 'result_image','temperature_c', 'htl_value','dist_p1_p2', 'dist_p2_p3', 'total_distance', 'expected_total', 'loss_mm', 'distances', 'created_at'])
+
+#     for detect in PulleyDetection.objects.all():
+#         sheet.append([detect.id, detect.user, detect.uploaded_image,detect.result_image, detect.temperature_c, detect.htl_value, detect.dist_p1_p2, detect.dist_p2_p3, detect.total_distance, detect.expected_total, detect.loss_mm, detect.distances, detect.created_at])
+
+#     response = HttpResponse(
+#         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+#     )
+#     response['Content-Disposition'] = 'attachment; filename="employee.xlsx"'
+
+#     workbook.save(response)
+#     return response
+
+from openpyxl import Workbook
+from django.http import HttpResponse
+from .models import PulleyDetection
+
+
+def export_excel(request):
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "PulleyDetection"
+
+    # HEADER
+    sheet.append([
+        'ID', 'User', 'Uploaded Image', 'Result Image',
+        'Temperature C', 'Htl Value', 'Dist P1 P2', 'Dist P2 P3',
+        'Total Distance', 'Expected Total', 'Loss mm',
+        'Distances', 'Created At'
+    ])
+
+    detections = PulleyDetection.objects.all()
+
+    for d in detections:
+        sheet.append([
+            d.id,
+            str(d.user),                     # FIXED
+            str(d.uploaded_image),           # FIXED
+            str(d.result_image),             # FIXED
+            d.temperature_c,
+            d.htl_value,
+            d.dist_p1_p2,
+            d.dist_p2_p3,
+            d.total_distance,
+            d.expected_total,
+            d.loss_mm,
+            str(d.distances),                # FIXED
+            d.created_at.strftime("%Y-%m-%d %H:%M:%S") if d.created_at else ""
+        ])
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="PulleyDetection.xlsx"'
+
+    workbook.save(response)
+    return response
+
+
+
+
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.pagesizes import landscape, A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import mm
+from django.http import HttpResponse
+from .models import PulleyDetection
+
+
+def export_pdf(request):
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="PulleyDetection_Report.pdf"'
+
+    doc = SimpleDocTemplate(
+        response,
+        pagesize=landscape(A4),
+        leftMargin=10,
+        rightMargin=10,
+        topMargin=10,
+        bottomMargin=10
+    )
+
+    styles = getSampleStyleSheet()
+    styleN = styles["Normal"]
+    styleN.fontSize = 6      # Smaller text → fit more columns
+    styleN.leading = 7       # Tight line spacing
+
+    # Load DB
+    data_rows = PulleyDetection.objects.all()
+
+    # Detect all fields
+    fields = [f.name for f in PulleyDetection._meta.get_fields() if f.concrete]
+
+    # Create readable headers
+    header = [f.replace("_", " ").title() for f in fields]
+
+    data = [header]
+
+    # Build rows
+    for row in data_rows:
+        row_data = []
+        for field in fields:
+            value = getattr(row, field)
+
+            # Wrap long content
+            value = "" if value is None else str(value)
+            row_data.append(Paragraph(value, styleN))
+
+        data.append(row_data)
+
+    # PROFESSIONAL COLUMN WIDTH HANDLING  
+    col_widths = []
+    for field in fields:
+        f = field.lower()
+
+        if "image" in f:
+            col_widths.append(35 * mm)  # For long filenames
+        elif "distance" in f or "result" in f or "loss" in f:
+            col_widths.append(40 * mm)
+        elif "created" in f or "updated" in f:
+            col_widths.append(30 * mm)
+        else:
+            col_widths.append(22 * mm)  # Default width
+
+    table = Table(data, colWidths=col_widths, repeatRows=1)
+
+    # Table styling
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 7),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+
+        # Table font for body
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 6),
+        ('VALIGN', (0, 1), (-1, -1), 'TOP'),
+
+        # Row height minimum
+        ('MINROWHEIGHT', (0, 0), (-1, -1), 8),
+
+        # Cell padding smaller (more compact)
+        ('LEFTPADDING', (0, 0), (-1, -1), 2),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 2),
+        ('TOPPADDING', (0, 0), (-1, -1), 1),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+
+        # Border grid
+        ('GRID', (0, 0), (-1, -1), 0.25, colors.grey),
+    ]))
+
+    doc.build([table])
+    return response
+
+
+
+

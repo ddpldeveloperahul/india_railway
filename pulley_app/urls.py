@@ -9,14 +9,16 @@ urlpatterns = [
     path('railway/', views.railway_view, name='railway'),
     path('result_data/', views.result_data_view, name='result_data'),
     path('old_data/', views.all_data_view, name='old_data'),
-     path('result_data_camera/', views.result_data_view_for_camera, name='result_data_camera'),
+    path('delete/<int:id>/', views.delete_detections, name='delete'),
+    path('result_data_camera/', views.result_data_view_for_camera, name='result_data_camera'),
     path('all_data_camera/', views.all_data_view_for_camera, name='all_data_camera'),
+    path('delete_camera/<int:id>/', views.detete_detections_camera, name='delete_camera'),
     path('profile/', views.profile_view, name='profile'),
     path('profile_form/', views.profile_form_view, name='profile_form'),
-    path('bookings/', views.bookings_view, name='bookings'),
+    # path('bookings/', views.bookings_view, name='bookings'),
     path('services/', views.services_view, name='services'),
     path('support/', views.support_view, name='support'),
-    path('employee/', views.count_user, name='employee'),
+    path('employee/', views.employees_view, name='employee'),
     # Password management URLs
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
@@ -47,4 +49,14 @@ urlpatterns = [
     path("request_capture/", views.request_capture, name="request_capture"),
     path("stop_camera/", views.stop_camera, name="stop_camera"),
     path("", views.index, name="index"),
+    
+    
+    #downlaod files
+    path('download_csv/', views.export_csv, name='download_csv'),
+    path('download_excel/', views.export_excel, name='download_excel'),
+    path('download_pdf/', views.export_pdf, name='download_pdf'),
+    
+    
+    
+    
 ]

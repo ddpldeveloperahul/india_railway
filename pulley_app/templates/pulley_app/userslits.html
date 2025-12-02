@@ -1036,17 +1036,24 @@
                 Employee Directory
             </h2>
             <div class="search-filter-container">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search employees..." onkeyup="filterTable()">
-                    <i class="fas fa-search"></i>
-                </div>
-                <div class="filter-dropdown">
+                 <div class="search-box">
+                    <form method="GET" action="{% url 'employee' %}">
+                        <input type="text" name="search" placeholder="Search employees..." value="{{ search }}" class="form-control" style="width: 300px; margin:20px">
+                         {% comment %} <button type="submit" class="search-btn">
+                         Search
+                        </button> {% endcomment %}
+                        {% comment %} <i class="fas fa-search"></i>    {% endcomment %}
+                        {% comment %} <i class="fas fa-search"></i> {% endcomment %}
+                    </form>
+                </div> 
+                
+                {% comment %} <div class="filter-dropdown">
                     <button class="filter-btn" onclick="toggleFilter()">
                         <i class="fas fa-filter"></i>
                         <span>Filter</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                </div>
+                </div> {% endcomment %}
             </div>
         </div>
 
@@ -1054,12 +1061,9 @@
             <table class="table" id="employeeTable">
                 <thead>
                     <tr>
-                        <th><i class="fas fa-hashtag"></i>ID</th>
-                        <th><i class="fas fa-user"></i>Employee</th>
-                        <th><i class="fas fa-id-badge"></i>Employee No.</th>
+                        <th><i class="fas fa-hashtag"></i>id</th> 
+                        <th><i class="fas fa-user"></i>Employee_Name</th>
                         <th><i class="fas fa-envelope"></i>Email</th>
-                        <th><i class="fas fa-user-tag"></i>Role</th>
-                        <th><i class="fas fa-toggle-on"></i>Status</th>
                         <th><i class="fas fa-calendar"></i>Joined Date</th>
                         <th><i class="fas fa-cog"></i>Actions</th>
                     </tr>
@@ -1067,8 +1071,11 @@
                 <tbody>
                     {% for employee in employees %}
                         <tr>
+                             {% comment %} <td>
+                                <span class="badge badge-id">{{ employee.id }}</span>
+                            </td>   {% endcomment %}
                             <td>
-                                <span class="badge badge-id">#{{ employee.id }}</span>
+                                <span class="badge badge-id">#{{ employee.employee_id }}</span>
                             </td>
                             <td>
                                 <div class="employee-info">
@@ -1077,37 +1084,11 @@
                                     </div>
                                     <div class="employee-details">
                                         <span class="employee-name">{{ employee.username|capfirst }}</span>
-                                        <span class="employee-email">{{ employee.get_full_name|default:"—" }}</span>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge badge-role">
-                                    {{ employee.employee_id|default:"N/A" }}
-                                </span>
-                            </td>
-                            <td>{{ employee.email }}</td>
-                            <td>
-                                <span class="badge badge-role">
-                                    {% if employee.is_superuser %}
-                                        <i class="fas fa-crown"></i> Admin
-                                    {% elif employee.is_staff %}
-                                        <i class="fas fa-user-tie"></i> Staff
-                                    {% else %}
-                                        <i class="fas fa-user"></i> Employee
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td>
-                                {% if employee.is_active %}
-                                    <span class="badge badge-active">
-                                        <i class="fas fa-check-circle"></i> Active
-                                    </span>
-                                {% else %}
-                                    <span class="badge badge-inactive">
-                                        <i class="fas fa-times-circle"></i> Inactive
-                                    </span>
-                                {% endif %}
+                                {{ employee.email }}
                             </td>
                             <td>
                                 <div class="date-info">

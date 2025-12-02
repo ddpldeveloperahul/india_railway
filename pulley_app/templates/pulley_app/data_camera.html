@@ -667,6 +667,52 @@
         .table tbody tr:nth-child(3) { animation-delay: 0.15s; }
         .table tbody tr:nth-child(4) { animation-delay: 0.2s; }
         .table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Toast container (top-right corner) */ 
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    /* Toast box style */
+    .toast-message {
+        display: flex;
+        align-items: center;
+        padding: 12px 18px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #fff;
+        min-width: 260px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.5s ease, fadeOut 0.5s ease 4s forwards;
+    }
+
+    /* Icons */
+    .toast-icon {
+        font-size: 20px;
+        margin-right: 12px;
+    }
+
+    /* Toast colors */
+    .success { background: #28a745; }
+    .error, .danger { background: #dc3545; }
+    .warning { background: #ffc107; color: #000; }
+    .info { background: #17a2b8; }
+
+    /* Slide In Animation */
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Fade Out Animation */
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; transform: translateX(100%); }
+    }
     </style>
 </head>
 <body>
@@ -696,7 +742,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container-flude">
         <!-- Stats Row -->
         <div class="stats-row">
             <div class="stat-card">
@@ -721,6 +767,7 @@
 
         <!-- Table Container -->
         <div class="table-container">
+            
             <div class="table-header">
                 <h2>
                     <i class="fas fa-table"></i>
@@ -733,6 +780,22 @@
             </div>
 
             <div class="table-wrapper">
+                    {% if messages %}
+                        <div class="toast-container">
+                            {% for message in messages %}
+                            <div class="toast-message {{ message.tags }}">
+                                <span class="toast-icon">
+                                    {% if message.tags == 'success' %} ✔
+                                    {% elif message.tags == 'error' or message.tags == 'danger' %} ✖
+                                    {% elif message.tags == 'warning' %} ⚠
+                                    {% else %} ℹ
+                                    {% endif %}
+                                </span>
+                                <span class="toast-text">{{ message }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 <table class="table" id="dataTable">
                     <thead>
                         <tr>
@@ -741,14 +804,15 @@
                             <th><i class="fas fa-user"></i>dist12</th>
                             <th><i class="fas fa-upload"></i>dist23</th>
                             <th><i class="fas fa-image"></i>total</th>
-                            <th><i class="fas fa-ruler"></i>expected_total</th>
-                            <th><i class="fas fa-calendar"></i>expected_dist12</th>
-                            <th><i class="fas fa-cog"></i>expected_dist23</th>
+                            <th><i class="fas fa-ruler"></i>exp_total</th>
+                            {% comment %} <th><i class="fas fa-calendar"></i>exp_dist12</th>
+                            <th><i class="fas fa-cog"></i>exp_dist23</th> {% endcomment %}
                             <th><i class="fas fa-calendar"></i>loss_mm</th>
                             <th><i class="fas fa-cog"></i>pulley_count</th>
                             <th><i class="fas fa-calendar"></i>temperature_c</th>
-                            <th><i class="fas fa-cog"></i>points_json</th>
+                            {% comment %} <th><i class="fas fa-cog"></i>points_json</th> {% endcomment %}
                             <th><i class="fas fa-cog"></i>image_path</th>
+                            <th><i class="fas fa-cog"></i>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -789,22 +853,22 @@
                                         <span class="user-name">{{ item.expected_total  | floatformat:2 }}</span>
                                     </div>
                                 </td>
-                                <td>
+                                {% comment %} <td>
                                     <div class="user-info">
                                         {% comment %} <div class="user-avatar">
                                             {{ item.dist12 }}
-                                        </div> {% endcomment %}
+                                        </div> 
                                         <span class="user-name">{{ item.expected_dist12 }}</span>
                                     </div>
-                                </td>
-                                <td>
+                                </td> {% endcomment %}
+                                {% comment %} <td>
                                     <div class="user-info">
                                         {% comment %} <div class="user-avatar">
                                             {{ item.dist12 }}
-                                        </div> {% endcomment %}
+                                        </div> 
                                         <span class="user-name">{{ item.expected_dist23 }}</span>
                                     </div>
-                                </td>
+                                </td> {% endcomment %}
                                 <td>
                                     <div class="user-info">
                                         {% comment %} <div class="user-avatar">
@@ -829,14 +893,15 @@
                                         <span class="user-name">{{ item.temperature_c }}</span>
                                     </div>
                                 </td>
-                                <td>
+                                {% comment %} <td>
                                     <div class="user-info">
                                         {% comment %} <div class="user-avatar">
                                             {{ item.dist12 }}
-                                        </div> {% endcomment %}
+                                        </div> {
                                         <span class="user-name">{{ item.points_json }}</span>
                                     </div>
                                 </td>
+                                {% endcomment %}
                                 <td>
                                     {% if item.image_path %}
                                         <div class="thumb-container">
@@ -853,14 +918,25 @@
                                     {% endif %}
                                 </td>
                                 
-                                <td>
+                                {% comment %} <td>
                                     {% if item.distances %}
                                         <span class="badge badge-distances">{{ item.distances }}</span>
                                     {% else %}
-                                        <span style="color: #999;">—</span>
+                                        <span style="color: #999;"></span>
                                     {% endif %}
+                                </td> {% endcomment %}
+                                <td>
+                                    <div class="actions">
+                                        <a href="{% url 'railway' %}" class="action-btn action-btn-back" title="Back">
+                                            <i class="fas fa-arrow-left"></i>
+                                            <span>Back</span>
+                                        </a>
+                                        <a href="{% url 'delete_camera' item.id %}" class="action-btn action-btn-back" title="Back">
+                                            <i class="fas fa-arrow-right"></i>
+                                            <span>Delete</span>
+                                        </a>
+                                    </div>
                                 </td>
-                                
                                 
                             </tr>
                         {% empty %}
@@ -995,7 +1071,11 @@
             document.querySelector('.search-box').style.display = 'block';
             document.querySelector('.header-actions').style.display = 'flex';
         };
-    </script>
+
+    setTimeout(() => {
+    document.querySelectorAll('.toast-message').forEach(el => el.remove());
+}, 4500);
+</script>
 
 </body>
 </html>

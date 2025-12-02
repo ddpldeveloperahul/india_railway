@@ -752,7 +752,7 @@
                 </h2>
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search records..." onkeyup="filterTable()">
+                    <input type="text" id="searchInput" placeholder="Search employees..." onkeyup="filterTable()">
                 </div>
             </div>
 
@@ -947,6 +947,79 @@ function filterTable() {
         row.style.display = text.includes(filter) ? "" : "none";
     });
 }
+ // Search/Filter functionality
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('employeeTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        const txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                tr[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            // Simulate refresh without page reload
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            filterTable();
+            alert('Data refreshed successfully!');
+        }
+
+        // View employee
+        function viewEmployee(id) {
+            console.log('Viewing employee:', id);
+            alert('Viewing employee #' + id);
+        }
+
+        // Edit employee
+        function editEmployee(id) {
+            console.log('Editing employee:', id);
+            alert('Editing employee #' + id);
+        }
+
+        // Delete employee
+        function deleteEmployee(id, name) {
+            if (confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
+                console.log('Deleting employee:', id);
+                alert('Employee deleted successfully');
+            }
+        }
+
+        // Add search input clear functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            if (this.value === '') {
+                filterTable();
+            }
+        });
+
+        // Print functionality enhancement
+        window.onbeforeprint = function() {
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.search-box').style.display = 'none';
+            document.querySelector('.header-actions').style.display = 'none';
+        };
+
+        window.onafterprint = function() {
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            document.querySelector('.search-box').style.display = 'block';
+            document.querySelector('.header-actions').style.display = 'flex';
+        };
 </script>
 
 </body>

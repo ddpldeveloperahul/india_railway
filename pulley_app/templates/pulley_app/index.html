@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -574,7 +575,7 @@
       <!-- Desktop Navigation -->
       <div class="desktop-nav justify-content-center align-items-center gap-4 flex-grow-1">
         <a href="{% url 'railway' %}" class="nav-link text-white fw-semibold">Home</a>
-        <a href="{% url 'bookings' %}" class="nav-link text-white fw-semibold">Employees</a>
+        <a href="{% url 'employee' %}" class="nav-link text-white fw-semibold">Employees</a>
         <a href="{% url 'services' %}" class="nav-link text-white fw-semibold">Services</a>
       </div>
 
@@ -599,7 +600,7 @@
       <!-- Mobile Menu Dropdown -->
       <div class="mobile-menu" id="mobileMenu">
         <a href="{% url 'railway' %}">Home</a>
-        <a href="{% url 'bookings' %}">Bookings</a>
+        <a href="{% url 'employee' %}">Employee</a>
         <a href="{% url 'services' %}">Services</a>
         {% if user.is_authenticated %}
           <span class="text-white fw-semibold">Welcome, {{ user.username | capfirst }}</span>
@@ -866,10 +867,10 @@
               playsinline
               controls
               style="height: 500px; object-fit: cover;">
-              <source src="./static/video/RailwayVod.mp4" type="video/mp4">
+              <source src="{% static './video/RailwayVod.mp4' %}" type="video/mp4">
               Your browser does not support the video tag.
             </video>
-          </div>
+          </div>s
         </div>
       </div>
     </div>
