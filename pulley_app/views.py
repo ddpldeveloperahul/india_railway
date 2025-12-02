@@ -50,7 +50,7 @@ def signup_view(request):
             #     employee_id=form.cleaned_data['employee_id'],
             #     password=form.cleaned_data['password']
             # )
-            user = form.save(commit=False)
+            # user = form.save(commit=False)
             form.save()
             # messages.success(request, "Signup successful! Please log in.")
             return redirect('login')
@@ -66,7 +66,7 @@ def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        # print("email,password",email,password)
+        print("email,password",email,password)
         # ✅ Authenticate using email
         user = authenticate(request, email=email, password=password)
         # print("useremailakdjfkj",user,email)
