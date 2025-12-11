@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload HTL & Temperature Data</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    
+<div class="container mt-5">
+    <button onclick="window.history.back()" 
+        style="padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px;">
+    ← Back
+</button>
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Upload HTL & Temperature Values</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                <!-- Pole Name Field -->
+                <div class="mb-3">
+                    <label for="{{ form.pole_name.id_for_label }}" class="form-label">
+                        {{ form.pole_name.label }}
+                    </label>
+                    {{ form.pole_name }}
+                    {% if form.pole_name.help_text %}
+                        <small class="form-text text-muted">{{ form.pole_name.help_text }}</small>
+                    {% endif %}
+                    {% for error in form.pole_name.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Temperature Field -->
+                <div class="mb-3">
+                    <label for="{{ form.temperature.id_for_label }}" class="form-label">
+                        {{ form.temperature.label }}
+                    </label>
+                    {{ form.temperature }}
+                    {% if form.temperature.help_text %}
+                        <small class="form-text text-muted">{{ form.temperature.help_text }}</small>
+                    {% endif %}
+                    {% for error in form.temperature.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- HTL Field -->
+                <div class="mb-3">
+                    <label for="{{ form.htl.id_for_label }}" class="form-label">
+                        {{ form.htl.label }}
+                    </label>
+                    {{ form.htl }}
+                    {% if form.htl.help_text %}
+                        <small class="form-text text-muted">{{ form.htl.help_text }}</small>
+                    {% endif %}
+                    {% for error in form.htl.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success w-100">
+                   Start Live Detection
+                </button>
+                <a href="{% url 'get_current_temperature' %}" class="btn btn-primary my-1 w-100">
+                    <i class="fas fa-temperature-high"></i>
+                    <span>Get Current Temperature</span>
+                </a>
+                <a href="{% url 'get_current_location' %}" class="btn btn-danger my-1 w-100">
+                    <i class="fas fa-location-arrow"></i>
+                    <span>Get Current Location</span>
+                </a>
+            </form>
+        {% if temperature %}
+            <div class="alert alert-info mt-3" role="alert">
+                Current Temperature: <strong>{{ temperature }}&#8451;</strong>
+            </div>
+            <script>
+                setTimeout(function() {
+                    window.history.back();
+                }, 2200); // Show for 2.2 seconds, then redirect to previous page
+            </script>
+        {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+

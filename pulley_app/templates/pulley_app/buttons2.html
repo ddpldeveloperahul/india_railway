@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Railway | Dashboard</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      background: #002147;
+      padding: clamp(25px, 5vw, 35px) clamp(15px, 3vw, 20px);
+      color: white;
+      margin-bottom: clamp(20px, 4vw, 30px);
+      box-shadow: 0 4px 20px rgba(0, 33, 71, 0.3);
+    }
+
+    .welcome-avatar {
+      width: clamp(55px, 10vw, 65px);
+      height: clamp(55px, 10vw, 65px);
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.5rem, 4vw, 1.8rem);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    }
+
+    .welcome-text h5 {
+      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+      font-weight: 400;
+      margin-bottom: 3px;
+      opacity: 0.85;
+    }
+
+    .welcome-text h3 {
+      font-size: clamp(1.3rem, 3vw, 1.6rem);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .welcome-icons {
+      font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 2.5vw, 18px);
+    }
+
+    .welcome-icons i,
+    .welcome-icons a {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      text-decoration: none;
+    }
+
+    .welcome-icons i:hover,
+    .welcome-icons a:hover {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+
+    /* Dashboard Section */
+    .dashboard-section {
+      padding: 0 clamp(15px, 3vw, 20px);
+      margin-bottom: clamp(25px, 5vw, 35px);
+    }
+
+    .section-title {
+      color: #002147;
+      font-weight: 700;
+      font-size: clamp(1.3rem, 3vw, 1.6rem);
+      margin-bottom: clamp(15px, 3vw, 20px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 20vw, 160px), 1fr));
+      gap: clamp(12px, 2.5vw, 18px);
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(25px, 5vw, 35px) clamp(15px, 3vw, 20px);
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      min-height: clamp(140px, 25vw, 160px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, var(--card-color-1) 0%, var(--card-color-2) 100%);
+      z-index: 1;
+    }
+
+    .dashboard-card>* {
+      position: relative;
+      z-index: 2;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-card .icon-circle {
+      width: clamp(55px, 12vw, 65px);
+      height: clamp(55px, 12vw, 65px);
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: clamp(10px, 2vw, 15px);
+      font-size: clamp(1.5rem, 4vw, 1.8rem);
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover .icon-circle {
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.1);
+    }
+
+    .dashboard-card h5 {
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Card Colors */
+    .card-gradient-1 {
+      --card-color-1: #667eea;
+      --card-color-2: #764ba2;
+    }
+
+    .card-gradient-2 {
+      --card-color-1: #2ebf91;
+      --card-color-2: #8360c3;
+    }
+
+    .card-gradient-3 {
+      --card-color-1: #fa8231;
+      --card-color-2: #fbc531;
+    }
+
+    .card-gradient-4 {
+      --card-color-1: #002147;
+      --card-color-2: #0066cc;
+    }
+
+    .card-gradient-5 {
+      --card-color-1: #f093fb;
+      --card-color-2: #f5576c;
+    }
+
+    .card-gradient-6 {
+      --card-color-1: #4facfe;
+      --card-color-2: #00f2fe;
+    }
+
+    /* Info Section */
+    .info-section {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(20px, 4vw, 30px);
+      margin: 0 clamp(15px, 3vw, 20px) clamp(20px, 4vw, 30px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-section h4 {
+      color: #002147;
+      font-weight: 700;
+      margin-bottom: clamp(12px, 2.5vw, 18px);
+      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-section p {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: clamp(12px, 2.5vw, 18px);
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+    }
+
+    .info-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(8px, 1.5vw, 12px);
+    }
+
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      color: white;
+      padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 16px);
+      border-radius: 50px;
+      font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 33, 71, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .info-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 33, 71, 0.3);
+    }
+
+    /* CTA Button */
+    .cta-section {
+      text-align: center;
+      margin: 0 clamp(15px, 3vw, 20px) clamp(25px, 5vw, 35px);
+    }
+
+    .btn-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      color: white;
+      padding: clamp(10px, 2vw, 14px) clamp(25px, 5vw, 35px);
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+      text-decoration: none;
+      border: 2px solid transparent;
+      box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 102, 204, 0.4);
+      color: white;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: clamp(8px, 2vw, 12px) clamp(5px, 1vw, 10px);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #666;
+      font-size: clamp(0.7rem, 1.6vw, 0.8rem);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      flex: 1;
+      max-width: clamp(70px, 15vw, 90px);
+      padding: clamp(5px, 1vw, 8px) 0;
+    }
+
+    .icon-wrapper {
+      width: clamp(42px, 9vw, 48px);
+      height: clamp(42px, 9vw, 48px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 3px;
+      transition: all 0.3s ease;
+      background: rgba(0, 33, 71, 0.05);
+    }
+
+    .nav-item svg {
+      width: clamp(18px, 4vw, 20px);
+      height: clamp(18px, 4vw, 20px);
+      fill: #666;
+      transition: fill 0.3s ease;
+    }
+
+    .nav-item.active .icon-wrapper {
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    }
+
+    .nav-item.active svg {
+      fill: white;
+    }
+
+    .nav-item.active {
+      color: #002147;
+      font-weight: 600;
+    }
+
+    .nav-item:hover .icon-wrapper {
+      background: rgba(0, 33, 71, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .nav-item.active:hover .icon-wrapper {
+      background: linear-gradient(135deg, #002147 0%, #0066cc 100%);
+    }
+
+    .nav-text {
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <!-- Left: Avatar + Text -->
+        <div class="d-flex align-items-center gap-3">
+          <div class="welcome-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="welcome-text">
+            <h5>Welcome </h5>
+            <h3>{{user.username |capfirst }}</h3>
+          </div>
+        </div>
+
+        <!-- Right: Icons -->
+        <div class="welcome-icons">
+          <i class="fas fa-bell"></i>
+          <a href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div class="dashboard-section">
+    <div class="container-fluid">
+      <h2 class="section-title">
+        <i class="fas fa-th-large"></i>
+        Dashboard
+      </h2>
+
+      <div class="dashboard-grid">
+        <!-- Picture Measure -->
+        <a class="dashboard-card card-gradient-1" href="{% url 'detect_pulleys' %}">
+          <div class="icon-circle">
+            <i class="fas fa-camera"></i>
+          </div>
+          <h5>Image Detection</h5>
+        </a>
+
+        <!-- Video Measure -->
+        <a class="dashboard-card card-gradient-2" href="{% url 'forms' %}">
+          <div class="icon-circle">
+            <i class="fas fa-video"></i>
+          </div>
+          <h5>Live Detection</h5>
+        </a>
+
+        <!-- Result Data -->
+        <a class="dashboard-card card-gradient-3" href="{% url 'choose_database' %}">
+          <div class="icon-circle">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h5>User's Data</h5>
+        </a>
+
+        <!-- Calculation -->
+        <a class="dashboard-card card-gradient-4" href="{% url 'calculator_buttons' %}">
+          <div class="icon-circle">
+            <i class="fas fa-calculator"></i>
+          </div>
+          <h5>Calculation</h5>
+        </a>
+
+        <!-- Employees -->
+        <a class="dashboard-card card-gradient-5" href="{% url 'employees' %}">
+          <div class="icon-circle">
+            <i class="fas fa-users"></i>
+          </div>
+          <h5>Employees</h5>
+        </a>
+
+        <!-- All Data -->
+        <a class="dashboard-card card-gradient-3" href="{% url 'choose_database2' %}">
+          <div class="icon-circle">
+            <i class="fas fa-database"></i>
+          </div>
+          <h5>All Data</h5>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Railway Information Section -->
+  <div class="info-section">
+    <h4>
+      <i class="fas fa-train"></i>
+      Indian Railway - Quick Facts
+    </h4>
+    <p>Indian Railways is one of the world's largest railway networks, operating over 13,000 passenger trains daily
+      across the nation.</p>
+
+    <div class="info-badges">
+      <span class="info-badge">
+        <i class="fas fa-map-marked-alt"></i>
+        68,000+ km Track
+      </span>
+      <span class="info-badge">
+        <i class="fas fa-train"></i>
+        13,000+ Trains
+      </span>
+      <span class="info-badge">
+        <i class="fas fa-building"></i>
+        7,000+ Stations
+      </span>
+      <span class="info-badge">
+        <i class="fas fa-users"></i>
+        23M Passengers/Day
+      </span>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="cta-section">
+    <a href="{% url 'main' %}" class="btn-main">
+      <i class="fas fa-home"></i>
+      Main
+    </a>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="{% url 'railway' %}" class="nav-item active">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 3l10 9h-3v9h-6v-6h-2v6H5v-9H2Z" />
+        </svg>
+      </div>
+      <span class="nav-text">Home</span>
+    </a>
+
+    <a href="{% url 'employee' %}" class="nav-item">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" />
+        </svg>
+      </div>
+      <span class="nav-text">Employee</span>
+    </a>
+
+    <a href="{% url 'services' %}" class="nav-item">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+        </svg>
+      </div>
+      <span class="nav-text">Services</span>
+    </a>
+    <a href="{% url 'profile_form' %}" class="nav-item">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 12a5 5 0 1 0-5-5a5 5 0 0 0 5 5Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z" />
+        </svg>
+      </div>
+      <span class="nav-text">Create Profile</span>
+    </a>
+  </div>
+
+</body>
+
+</html>
